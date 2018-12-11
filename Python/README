@@ -1,0 +1,20 @@
+you will need to copy over this python script which reads the netcdf file and calculates the phase curve:
+
+/home/bd257/Software/python_scripts/calculate_zs2017_phase_curve.py
+
+There are then two ‘control’ python scripts to run this and create the plots:
+
+1) a script that calculates the phase curve and writes it to a file
+/home/bd257/Software/python_scripts/calculate_zs17_phase_curves_gj1214.py
+
+In there you can see there are many calls the function calculate_zs17_phase_curve with the various input for each simulation. You’ll need to change the fname and fname_out variables, and also to add in any additional simulations that are not yet included in there (the slow rotator for instance)
+
+You should just be able to run this by running 
+python calculate_zs17_phase_curves_gj1214.py
+in the directory where the scripts are
+
+2) the second control routine creates the plots:
+/home/bd257/Software/plotting_scripts/um_plot_scripts/gj1214_dynamics/plot_gj1214_phase_curves.py
+
+again you just need to change the paths, and add any new simulations that are missing and run it the same as above
+python plot_gj1214_phase_curves.py

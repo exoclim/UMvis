@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# A very simple script which runs through the commands listed in a
+# executing each one, except those with a preceeding #
+# It has a three inputs from command line:
+
+# 1: A file containing a list of IDL commands
+if [[ -z "$1" ]]; then
+    echo "No idl command file supplied exiting script"
+    exit
+else
+    idl_command_file=$1 
+    echo "Using commands from: " $idl_command_file
+fi
+
+# 2: A name for the idl log file
+if [[ -z "$2" ]]; then
+    echo "No log file name supplied"
+    exit
+else
+    idl_log_file=$2
+    echo "Using idl log file name: " $idl_log_file
+    echo "Creating new version (i.e. deleting old)"
+    rm $idl_log_file
+    touch $idl_log_fil
+fi
+
+# 3: Are we replotting (i.e. mapping not required)
+if [[ -z "$3" ]]; then
+    echo "Performing mapping"
+    re_plot=''
+else
+    echo "Skipping mapping"
+    re_plot=', /from_map'
+fi
+
+# Loop over each command in the prepared file
+while read idl_command; do
+    # Skip jobs with preceding #
+    if [[ ${idl_command:0:1} = "#" ]]; then
+	echo 'Skipping this job:' $idl_command
+    elif [[ -z "$idl_command" ]]; then
+	echo "Command line empty: " $idl_command
+	echo "skipping..."
+    else
+	# Check this command is not already a replot
+	extra_com=$re_plot
+	if [[ $idl_command == *"/from_map"* ]]; then
+	    extra_com=''
+	fi
+	echo "Running IDL Command:"
+	echo $idl_command$extra_com
+	echo $idl_command$extra_com > idl.in
+	# Execute the command
+        idl < idl.in &>> $idl_log_file
+    fi
+done < $idl_command_file

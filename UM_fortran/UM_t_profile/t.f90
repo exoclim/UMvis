@@ -1,0 +1,5 @@
+ print*, '1: all lattitudes, longitudes, pressures and derived temperatures'
+  print*, '2: Temperature over latitudes for set longitude and pressure/height'
+  print*, '3: Temperature over longitude for set latitudes and pressure/height'
+  print*, '4: Temperature over Pressure for set latitudes and longitude'
+  print*, '5: Temperature at one value of Pressure, Latitude and Longitude'

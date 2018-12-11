@@ -1,0 +1,43 @@
+pro cvar_aam_atm, fname, netcdf_var_names, $
+                  p_array, psurf_array,$
+                  p_grid_name, p_grid_size,$
+                  p_lon, p_lat, p_vert, p_time,$
+                  variable_out,$
+                  var_grid_name, var_grid_size,$
+                  var_lon, var_lat, var_vert, var_time,$
+                  planet_radius, pi, eqn_type=eqn_type,$
+                  which_var, $
+                  verbose=verbose
+  ; Routine to construct Axial Angular Momentum
+  ; of the atmospheric component only, i.e omega=0.0
+  ; Read in mass
+  cvar_mass, fname, netcdf_var_names, $
+             p_array, psurf_array,$
+             p_grid_name, p_grid_size,$
+             p_lon, p_lat, p_vert, p_time,$
+             mass,$
+             var_grid_name, var_grid_size,$
+             var_lon, var_lat, var_vert, var_time,$
+             planet_radius, pi,$
+             verbose=verbose
+  ; Read in zonal velocity
+  target_var='Uvel'
+  ncdf_name=get_netcdf_short_name(netcdf_var_names, target_var)
+  read_netcdf_variable_only,fname, ncdf_name, u_vel
+  ; Read in the longitude grid
+  u_lon=get_variable_grid(fname, ncdf_name, 0, verbose=verbose)
+  ; Need zonal velocity on pressure points
+  u_vel_press=interp_longitude_um_std(u_vel, u_lon, var_lon)
+  u_vel=0
+  which_type='AAM_Atm'
+  omega_in=0.0
+  variable_out=calc_zon_ang_mmtm(mass, u_vel_press,$
+                                 planet_radius, $
+                                 var_vert,$
+                                 var_lat, $
+                                 pi, omega_in,$
+                                 which_type, $
+                                 eqn_type=eqn_type)
+  mass=0
+  u_vel_press=0
+end
