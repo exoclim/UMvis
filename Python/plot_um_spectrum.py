@@ -366,7 +366,7 @@ def construct_transmission_spectrum(fname,fname_phase,fname_spec,
     print 'saving processed data to: ',fname_txt_output
     f = open(fname_txt_output,'w')
     # Write header
-    f.write('Wavelength [m]  Rp/Rs'+' \n')
+    f.write('Wavelength [m]  (Rp/Rs)^2'+' \n')
     for i in range(nu.size):
       f.write((str('%1.4e'%nu[i])+' '+str('%1.4e'%rprs[i])+' \n'))
       
@@ -419,85 +419,85 @@ marker='',
 label='',
 showfig=True):           # Show figure on screen
 
-	# Calculate phase curve
-	time, phase, fpfs = construct_phase_curve(fname,fname_phase,fname_spec,ncdf_name,
-	instrument,numin,numax,
-	rel_flux,scale_flux,
-	start_trim,end_trim,
-	sc,rs,rp,zph,ztop)
+  # Calculate phase curve
+  time, phase, fpfs = construct_phase_curve(fname,fname_phase,fname_spec,ncdf_name,
+    instrument,numin,numax,
+    rel_flux,scale_flux,
+    start_trim,end_trim,
+    sc,rs,rp,zph,ztop)
 
-	# Initialise - setup to include 2 x-axes
-	fig = figure(1)
-	ax1 = fig.add_subplot(111)
-	# Setup second x-axis
-	if plot_as_time:
-	  ax2 = ax1.twiny()
+  # Initialise - setup to include 2 x-axes
+  fig = figure(1)
+  ax1 = fig.add_subplot(111)
+  # Setup second x-axis
+  if plot_as_time:
+    ax2 = ax1.twiny()
 
-	if plot_as_time:
-		ax1.plot(time,fpfs,color=color,linestyle=linestyle,marker=marker,linewidth=linewidth,label=label)
-		ax1.set_xlabel('Time [days]',fontsize=20)
-	else:
-		ax1.plot(phase,fpfs,color=color,linestyle=linestyle,marker=marker,linewidth=linewidth,label=label)
-		ax1.set_xlabel('Phase angle [deg]',fontsize=20)
+  if plot_as_time:
+    ax1.plot(time,fpfs,color=color,linestyle=linestyle,marker=marker,linewidth=linewidth,label=label)
+    ax1.set_xlabel('Time [days]',fontsize=20)
+  else:
+    ax1.plot(phase,fpfs,color=color,linestyle=linestyle,marker=marker,linewidth=linewidth,label=label)
+    ax1.set_xlabel('Phase angle [deg]',fontsize=20)
 
-	# Plot HD~209458b 4.5 micron phase curve (Zellem et al 2014)
-	if plot_zellem2014:
-	  plot_zellem_curve(phase)
-	
-	# Add second 'phase' x-axis
-	if plot_as_time:
-	  # Create second x-axis with phases
-	  ax2.set_xlim(ax1.get_xlim())
+  # Plot HD~209458b 4.5 micron phase curve (Zellem et al 2014)
+  if plot_zellem2014:
+    plot_zellem_curve(phase)
 
-	  # Phases to go on second x-axis
-	  phases = np.array([90.,180.,270.])
-	
-	  # Get elapsed time for these phases
-	  f = interp1d(phase_angle,time)
-	  new_tick_locations = f(phases)
-	
-	  # Set second x-axis tick values
-	  ax2.set_xticks(new_tick_locations)
-	  ax2.set_xticklabels(tick_function(time,phase_angle,new_tick_locations))
-	  
-	  ax2.set_xlabel('Phase Angle [$\degree$]',fontsize=20)
+  # Add second 'phase' x-axis
+  if plot_as_time:
+    # Create second x-axis with phases
+    ax2.set_xlim(ax1.get_xlim())
 
-	  # Add vertical lines at important phases
-	  if add_phase_lines == True:
-		  lines = [90.,180.,270.]
-		  f = interp1d(phase_angle,time)
-		  for l in lines:
-			  x = f(l)
-			  ax2.plot([x,x],[1e-20,1.],color='black',linestyle=':')
+    # Phases to go on second x-axis
+    phases = np.array([90.,180.,270.])
 
-	# Show legend
-	if leg == True:
-		ax1.legend(loc=0,fontsize=15).draw_frame(0)
+    # Get elapsed time for these phases
+    f = interp1d(phase_angle,time)
+    new_tick_locations = f(phases)
 
-	# Set y-axis to logarithmic 
-	# Set y-axis labels
-	if rel_flux == True:
-		ax1.set_ylabel('Relative flux',fontsize=20)
-	else:
-		ax1.set_ylabel('$F_p$/$F_s$',fontsize=20)
-	ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    # Set second x-axis tick values
+    ax2.set_xticks(new_tick_locations)
+    ax2.set_xticklabels(tick_function(time,phase_angle,new_tick_locations))
 
-	# Write data to text file
-	if fname_txt_output is not None:
-	  f = open(fname_txt_output,'w')
-	  # Write header
-	  f.write('Phase  Fp/Fs')
-	  for i in range(nu.size):
-		f.write((str('%1.4e'%phase[i])+' '+str('%1.4e'%fpfs[i])+' \n'))
+    ax2.set_xlabel('Phase Angle [$\degree$]',fontsize=20)
 
-    if fname_save==None:
-      print 'fname_save not defined, will not save figure'
-    else:
-      savefig(fname_save)
+    # Add vertical lines at important phases
+    if add_phase_lines == True:
+      lines = [90.,180.,270.]
+      f = interp1d(phase_angle,time) 
+      for l in lines:
+        x = f(l)
+        ax2.plot([x,x],[1e-20,1.],color='black',linestyle=':')
 
-	# Show figure on screen
-	if showfig == True:
-		show()
+  # Show legend
+  if leg == True:
+    ax1.legend(loc=0,fontsize=15).draw_frame(0)
+
+  # Set y-axis to logarithmic 
+  # Set y-axis labels
+  if rel_flux == True:
+    ax1.set_ylabel('Relative flux',fontsize=20)
+  else:
+    ax1.set_ylabel('$F_p$/$F_s$',fontsize=20)
+    ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+  # Write data to text file
+  if fname_txt_output is not None:
+    f = open(fname_txt_output,'w')
+    # Write header
+    f.write('Phase  Fp/Fs')
+    for i in range(nu.size):
+      f.write((str('%1.4e'%phase[i])+' '+str('%1.4e'%fpfs[i])+' \n'))
+
+  if fname_save==None:
+    print 'fname_save not defined, will not save figure'
+  else:
+    savefig(fname_save)
+
+  # Show figure on screen
+  if showfig == True:
+    show()
 
 # Function to plot zellem et al 2014 HD 209458b 4.5 micron phase curve
 def plot_zellem_curve(phase_angle):
@@ -588,7 +588,7 @@ linestyle='-',
 color='black',
 alpha=1.,
 shift=0.,
-showfig=True
+showfig=False
 ):
  
   # Check start_trim and end_trim are defined
@@ -605,7 +605,7 @@ showfig=True
   # Plot 
   plot(nu_plot,rprs,label=label,color=color,linestyle=linestyle,linewidth=linewidth,alpha=alpha)
 
-  ylabel('$R_p/R_s$',fontsize=15)
+  ylabel('$(R_p/R_s)^2$',fontsize=15)
   xlabel('Wavelength $\mu$m]',fontsize=20)
 
   # Add legend
