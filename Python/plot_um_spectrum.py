@@ -352,7 +352,7 @@ def construct_transmission_spectrum(fname,fname_phase,fname_spec,
   # Convert from relative flux to absolute flux
   fstar = fstar*sc
 
-  # Calculate radius ratio
+  # Calculate radius ratio (actually this is the square of the radius ratio - (Rp/Rs)**2)
   rprs = ztop**2./rs**2.
   rprs = rprs - (trans/fstar)
 
@@ -596,13 +596,14 @@ showfig=False
     print 'Error: both start_trim and end_trim must be defined'
     
   # Read and post-process transmission spectrum
+  # Return wavelength (m) and (Rp/Rs)**2
   nu, rprs = construct_transmission_spectrum(fname,fname_phase,fname_spec,
     ncdf_name,start_trim,end_trim,sc,rp,rs,
     ztop,fname_txt_output)
 
   nu_plot = nu*1e6 # microns
 
-  # Plot 
+  # Plot transit depth: (Rp/Rs)**2
   plot(nu_plot,rprs,label=label,color=color,linestyle=linestyle,linewidth=linewidth,alpha=alpha)
 
   ylabel('$(R_p/R_s)^2$',fontsize=15)
